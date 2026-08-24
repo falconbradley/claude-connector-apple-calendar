@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # macOS: the server imports a macOS-only stack (PyObjC + EventKit).
+    # Live Group-B tests are skipped — CI runners have no Calendar TCC grant.
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Sync dependencies
+        run: uv sync --all-extras --dev --python ${{ matrix.python-version }}
+
+      # Catches SDK drift (e.g. mcp 2.0 removing FastMCP) before it ships:
+      # the static tests pass happily against a server that no longer imports.
+      - name: Import the server
+        run: uv run --python ${{ matrix.python-version }} python -c "from apple_calendar_mcp import server; print(server.mcp.name)"
+
+      - name: Run tests (static)
+        run: uv run --python ${{ matrix.python-version }} python tests/test_e2e.py --skip-live
+
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install mcpb CLI
+        run: npm install -g @anthropic-ai/mcpb
+
+      - name: Validate manifest
+        run: mcpb validate manifest.json
+
+      - name: Check version consistency
+        run: |
+          MANIFEST=$(python3 -c "import json;print(json.load(open('manifest.json'))['version'])")
+          PYPROJECT=$(python3 -c "import re;print(re.search(r'^version = \"(.*)\"', open('pyproject.toml').read(), re.M).group(1))")
+          echo "manifest.json: $MANIFEST"
+          echo "pyproject.toml: $PYPROJECT"
+          if [ "$MANIFEST" != "$PYPROJECT" ]; then
+            echo "::error::version mismatch between manifest.json and pyproject.toml"
+            exit 1
+          fi
+
+      - name: Check manifest tool list matches the server
+        run: |
+          python3 - <<'PY'
+          import json, re, sys
+          manifest = {t["name"] for t in json.load(open("manifest.json"))["tools"]}
+          src = open("src/apple_calendar_mcp/server.py").read()
+          # tools are declared as @mcp.tool()-decorated defs
+          code = set(re.findall(r"@mcp\.tool\(\)\s*\ndef (\w+)", src))
+          if manifest != code:
+              print(f"::error::manifest/server tool mismatch")
+              print(f"  only in manifest.json: {sorted(manifest - code)}")
+              print(f"  only in server.py:     {sorted(code - manifest)}")
+              sys.exit(1)
+          print(f"OK: {len(code)} tools match")
+          PY

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/mcpb/main/mcpb-manifest.schema.json",
+  "manifest_version": "0.4",
+
+  "name": "apple-calendar",
+  "display_name": "Apple Calendar",
+  "version": "0.1.0",
+  "description": "Access Apple Calendar on macOS via EventKit — list, search, create, update, and delete events with full support for recurring events, alarms, attendees, and free/busy availability.",
+  "long_description": "Connects Claude to Apple Calendar on your Mac via Apple's first-class EventKit framework. Full read+write coverage of the Calendar data model.\n\n**Features:**\n- Browse all calendars across all accounts (iCloud, Google/CalDAV, Exchange, Local, subscribed)\n- List and search events by date range, calendar, and free text\n- Full event detail — notes, URL, organizer, attendees and their responses, time zone\n- Create events with recurrence rules, alarms, structured (geocoded) locations, and availability\n- Edit recurring events per-occurrence or for all future occurrences (span control)\n- Free/busy: merged busy intervals over any date range, for finding open slots\n- Manage calendars themselves — create, rename, recolor, delete\n- Deep-link any event via ical:// URL\n\n**Requirements:**\n- macOS 14 Sonoma or later\n- Calendar permission with Full Access (System Settings → Privacy & Security → Calendars)",
+
+  "author": {
+    "name": "Brad"
+  },
+
+  "icon": "icon.png",
+  "icons": [
+    { "src": "icons/icon-128.png", "size": "128x128" },
+    { "src": "icons/icon-256.png", "size": "256x256" },
+    { "src": "icons/icon-512.png", "size": "512x512" }
+  ],
+
+  "server": {
+    "type": "uv",
+    "entry_point": "src/apple_calendar_mcp/server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--project", "${__dirname}", "apple-calendar-mcp"],
+      "env": {}
+    }
+  },
+
+  "tools": [
+    { "name": "list_calendars",    "description": "List every event calendar on this Mac, with id, title, color, source, write-access flag, and which is the default" },
+    { "name": "create_calendar",   "description": "Create a new calendar with optional color and source/account" },
+    { "name": "update_calendar",   "description": "Rename or recolor an existing calendar" },
+    { "name": "delete_calendar",   "description": "Delete a calendar and all its events (destructive)" },
+    { "name": "get_stats",         "description": "Aggregate counts: calendar count, events today, events in the next 7 days, next upcoming event" },
+    { "name": "list_events",       "description": "List event occurrences in a date range, with filters: calendars, text, all-day, canceled" },
+    { "name": "search_events",     "description": "Free-text search across event titles, notes, and locations, within an optional date range" },
+    { "name": "get_event",         "description": "Full detail for an event — notes, organizer, attendees, recurrence, alarms, location, time zone" },
+    { "name": "get_event_link",    "description": "Get an ical:// URL that opens the event in Calendar.app" },
+    { "name": "get_availability",  "description": "Merged busy intervals (free/busy) within a date range — gaps between them are free slots" },
+    { "name": "create_event",      "description": "Create an event with full property set: notes, URL, location, recurrence, alarms, availability, time zone" },
+    { "name": "update_event",      "description": "Update any subset of an event's properties; occurrence_date + span control recurring-event scope; clear_* flags remove fields" },
+    { "name": "delete_event",      "description": "Delete an event or one/some occurrences of a recurring event (span controls scope)" }
+  ],
+
+  "keywords": ["apple", "calendar", "events", "scheduling", "macos", "recurrence", "free-busy", "availability", "eventkit"],
+  "license": "MIT",
+
+  "compatibility": {
+    "platforms": ["darwin"],
+    "runtimes": {
+      "python": ">=3.11"
+    }
+  }
+}

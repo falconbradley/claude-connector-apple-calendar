@@ -1,0 +1,34 @@
+# Build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Dev files
+.git/
+.github/
+.venv/
+.env
+.env.*
+*.log
+.pytest_cache/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Claude config (not part of the extension)
+.claude/
+
+# Dev-only tooling (icon extraction) — not part of the extension
+tools/
+
+# Tests and docs that don't need to ship
+tests/
+CHANGELOG.md
