@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] — 2026-10-06
+
+### Changed
+
+- **Releases ship only the versioned bundle**, `apple-calendar-X.Y.Z.mcpb`. The unversioned `apple-calendar.mcpb` is no longer built or published.
+- **`build.sh` is shared verbatim across the Apple connectors**, reading names from `manifest.json`. Every repo's build now runs `./test.sh`, validates the manifest, checks the version across `manifest.json`, `pyproject.toml`, `__init__.py`, and `uv.lock`, checks the manifest's tool list against the running server (`.github/check_tools.py`, also used by CI), refuses to overwrite an already-built version without `--force`, and records the bundle's checksum in `dist/SHA1SUMS`. `--skip-tests` skips `./test.sh`.
+
 ## [0.1.1] — 2026-10-06
 
 ### Changed

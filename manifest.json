@@ -4,7 +4,7 @@
 
   "name": "apple-calendar",
   "display_name": "Apple Calendar",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Access Apple Calendar on macOS via EventKit — list, search, create, update, and delete events with full support for recurring events, alarms, attendees, and free/busy availability.",
   "long_description": "Connects Claude to Apple Calendar on your Mac via Apple's first-class EventKit framework. Full read+write coverage of the Calendar data model.\n\n**Features:**\n- Browse all calendars across all accounts (iCloud, Google/CalDAV, Exchange, Local, subscribed)\n- List and search events by date range, calendar, and free text\n- Full event detail — notes, URL, organizer, attendees and their responses, time zone\n- Create events with recurrence rules, alarms, structured (geocoded) locations, and availability\n- Edit recurring events per-occurrence or for all future occurrences (span control)\n- Free/busy: merged busy intervals over any date range, for finding open slots\n- Manage calendars themselves — create, rename, recolor, delete\n- Deep-link any event via ical:// URL\n\n**Requirements:**\n- macOS 14 Sonoma or later\n- Calendar permission with Full Access (System Settings → Privacy & Security → Calendars)",
 

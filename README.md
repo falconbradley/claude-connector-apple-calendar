@@ -64,7 +64,7 @@ cd claude-connector-apple-calendar
 ./build.sh
 ```
 
-Then double-click `dist/apple-calendar.mcpb` (or drag it into Claude Desktop).
+Then double-click `dist/apple-calendar-<version>.mcpb` (or drag it into Claude Desktop).
 
 The extension appears in **Settings > Extensions** with the Calendar icon.
 
@@ -144,7 +144,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Or manually:
 mcpb validate manifest.json
-mcpb pack . dist/apple-calendar.mcpb
+mcpb pack . dist/apple-calendar-<version>.mcpb
 ```
 
 ### Project layout
@@ -158,7 +158,7 @@ claude-connector-apple-calendar/
 │   ├── icon-256.png
 │   └── icon-512.png
 ├── pyproject.toml                   # Python package + dependencies
-├── build.sh                         # Validate + pack build script (gates on version drift)
+├── build.sh                         # Test, check, and pack build script
 ├── tools/                           # Dev-only icon extraction (not packed)
 ├── tests/
 │   └── test_e2e.py                  # End-to-end tests
@@ -247,7 +247,7 @@ Every connector in the family releases the same way:
 2. Add a section for the version to [CHANGELOG.md](CHANGELOG.md).
 3. Commit, tag `vX.Y.Z`, and push the tag: `git push origin main vX.Y.Z`.
 
-The [release workflow](.github/workflows/release.yml) then runs the tests, checks the tag matches all three version files, builds with `./build.sh`, and publishes `apple-calendar.mcpb` and `apple-calendar-X.Y.Z.mcpb` to a GitHub release whose notes are that version's CHANGELOG section.
+The [release workflow](.github/workflows/release.yml) then checks the tag matches all three version files, runs `./build.sh` (tests, manifest and tool checks, pack), and publishes `apple-calendar-X.Y.Z.mcpb` to a GitHub release whose notes are that version's CHANGELOG section.
 
 ## License
 
