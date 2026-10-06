@@ -22,6 +22,8 @@ import logging
 import threading
 from typing import Optional
 
+from .launcher import privacy_pane_steps
+
 logger = logging.getLogger(__name__)
 
 
@@ -31,11 +33,9 @@ class PermissionDeniedError(RuntimeError):
     def __init__(self, underlying: Optional[str] = None) -> None:
         msg = (
             "Apple Calendar access was not granted to this process.\n\n"
-            "To fix:\n"
-            "  1. Open System Settings → Privacy & Security → Calendars\n"
-            "  2. Enable 'Claude' (or the parent app, e.g. Terminal/iTerm)\n"
-            "     with Full Access\n"
-            "  3. Quit and relaunch Claude Desktop\n"
+            + privacy_pane_steps("Calendars", "Full Access")
+            + "\n\n(Running the server from a terminal instead? Enable "
+            "the terminal app in that pane.)\n"
         )
         if underlying:
             msg += f"\nUnderlying error: {underlying}"

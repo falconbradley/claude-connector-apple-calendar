@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] — 2026-10-06
+
+### Changed
+
+- **Permission errors name the exact binary to grant.** Claude Desktop launches extensions through a helper that makes the spawned `uv` — not Claude — responsible for their privacy grants. Errors now print that `uv`'s path (e.g. `~/Library/Application Support/Claude/uv-runtime/uv-0.9.7-darwin-arm64/uv`) ready to paste into System Settings, and explain that enabling Claude is not enough, that one grant covers every Apple connector, and that it must be redone when Claude Desktop updates its `uv`.
+- The Calendars-access error includes those steps. It used to say to enable Claude, which has no effect.
+- **README:** permissions now consistently point at `uv`, the restart step is consistently "quit Claude (⌘Q) and reopen it", and a new *Using several Apple connectors* section covers installing them one at a time, the shared `uv` grant, re-granting after updates, and verifying each connector.
+- **Release flow shared across the Apple connectors.** The [release workflow](.github/workflows/release.yml) and [CI](.github/workflows/ci.yml) are now identical in every repo, with per-repo tests in `./test.sh`. Release notes come from this changelog instead of being generated.
+- CI checks that `manifest.json`, `pyproject.toml`, `__init__.py`, and `uv.lock` agree on the version, and compares the manifest's tool list against the running server rather than a regex over its source.
+
 ## [0.1.0] — 2026-08-24
 
 Initial release.
